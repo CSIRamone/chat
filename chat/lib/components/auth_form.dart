@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import '../models/auth_form_data.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({super.key});
+  final void Function(AuthFormData) onSubmit;
+
+  const AuthForm({
+    super.key,
+    required this.onSubmit,
+  });
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -16,6 +21,8 @@ class _AuthFormState extends State<AuthForm> {
   void _submit() {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
+
+    widget.onSubmit(_formData);
   }
 
   @override
@@ -25,6 +32,7 @@ class _AuthFormState extends State<AuthForm> {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               if (_formData.isSignup)
@@ -33,10 +41,10 @@ class _AuthFormState extends State<AuthForm> {
                   initialValue: _formData.name,
                   onChanged: (name) => _formData.name = name,
                   decoration: const InputDecoration(labelText: 'Nome'),
-                  validator: (_name) {
-                    final name = _name ?? '';
-                    if (name.trim().length > 5) {
-                      return 'O Nome deve ter no mínimo 5 caracteres.';
+                  validator: (localName) {
+                    final name = localName ?? '';
+                    if (name.trim().length < 5) {
+                      return 'Nome deve ter no mínimo 5 caracteres.';
                     }
                     return null;
                   },
@@ -46,8 +54,8 @@ class _AuthFormState extends State<AuthForm> {
                   initialValue: _formData.email,
                   onChanged: (email) => _formData.email = email,
                   decoration: const InputDecoration(labelText: 'E-mail'),
-                  validator: (_email) {
-                    final email = _email ?? '';
+                  validator: (localEmail) {
+                    final email = localEmail ?? '';
                     if (!email.contains('@')) {
                       return 'O email informado não está correto.';
                     }
@@ -59,8 +67,8 @@ class _AuthFormState extends State<AuthForm> {
                   onChanged: (password) => _formData.password = password,
                   obscureText: true,
                   decoration: const InputDecoration(labelText: 'Senha'),
-                  validator: (_passaword) {
-                    final password = _passaword ?? '';
+                  validator: (localPassaword) {
+                    final password = localPassaword ?? '';
                     if (password.length < 6) {
                       return 'A senha deve ter no minimo 6 caracteres.';
                     }
