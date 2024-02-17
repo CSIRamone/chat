@@ -5,6 +5,7 @@ import 'package:chat/pages/load_pages.dart';
 import 'package:flutter/material.dart';
 
 import '../core/models/chat_user.dart';
+import '../core/services/auth/auth_service.dart';
 
 class AuthOrAppPage extends StatelessWidget {
   const AuthOrAppPage({super.key});
@@ -13,7 +14,7 @@ class AuthOrAppPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<ChatUser?>(
-        stream: AuthMockService().userChanges,
+        stream: AuthService().userChanges,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadPages();
