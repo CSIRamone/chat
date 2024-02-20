@@ -1,4 +1,6 @@
+import 'package:chat/components/message_bubble.dart';
 import 'package:chat/core/models/chat_messages.dart';
+import 'package:chat/core/services/auth/auth_service.dart';
 import 'package:chat/core/services/chat/chat_service.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +9,7 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = AuthService().currentUser;
     return StreamBuilder<List<ChatMessage>>(
       stream: ChatService().messagesStream(),
       builder: (context, snapshot) {
@@ -19,7 +22,11 @@ class Messages extends StatelessWidget {
           return ListView.builder(
             reverse: true,
             itemCount: msgs.length,
-            itemBuilder: (context, index) => Text(msgs[index].text),
+            itemBuilder: (context, index) => MessageBubble(
+              key: ValueKey(msgs[index].id),
+              message: msgs[index],
+              belongToCurrentUser: currentUser?.id == msgs[index].userId,
+            ),
           );
         }
       },
